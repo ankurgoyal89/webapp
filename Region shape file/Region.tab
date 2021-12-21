@@ -1,8 +1,0 @@
-!table
-!version 450
-!charset Neutral
-
-Definition Table
-  Type NATIVE Charset "Neutral"
-  Fields 1
-    Region_2 Char (254) ;
