@@ -65,7 +65,7 @@ calc = st.button("Calculate")
 if calc:
     existing = load_database(file)
     existing = pd.concat([existing,tempcode],axis=0,ignore_index = True)
-    region = gpd.read_file('Region shape file\Region.tab')
+    region = gpd.read_file(r'webapp\Region shape file\Region.tab')
     coords = existing[['LONGITUDE','LATITUDE']].to_numpy()
     boundary_shape = unary_union(region.geometry).buffer(0.5)
     poly_shapes, poly_to_pt_assignments = voronoi_regions_from_coords(coords,boundary_shape)
