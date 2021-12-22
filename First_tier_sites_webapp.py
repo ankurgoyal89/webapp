@@ -17,14 +17,15 @@ st.title("First Tier Sites webapp")
 st.subheader("This application will calculate first tier locations of required lat long")
 file = st.file_uploader("Upload Planar physical data 'Physical_location_list_with_remote.xlsx'")
 exclude = st.checkbox("Exclude IBC sites")
-
+select=st.multiselect('Select sites to include',['dummy','On Air','Cancel','Plan','On Progress','Cancel,On Air','On Air,Plan','On Air,On Progress','On Progress,Plan','Cancel,On Air,On Progress','Cancel,On Progress,Plan'],['On Air','Cancel','Plan','On Progress'] )
 @st.cache
 def load_database(file):
     df = pd.read_excel(file,usecols=['U21_STATUS','U21_SITETYPE','LOCATION_ID','LATITUDE','LONGITUDE'])
+    df = df[df['U21_STATUS'].isin(select)]
     if exclude:
-        df = df.loc[(df['U21_STATUS']=='On Air')&(df['U21_SITETYPE']!='IBC')][['LOCATION_ID','LATITUDE','LONGITUDE']]
+        df = df.loc[df['U21_SITETYPE']!='IBC'][['LOCATION_ID','LATITUDE','LONGITUDE']]
     else:
-        df = df.loc[(df['U21_STATUS']=='On Air')][['LOCATION_ID','LATITUDE','LONGITUDE']]
+        df = df[['LOCATION_ID','LATITUDE','LONGITUDE']]
     return df
 def distance(lat1,lon1,lat2,lon2):
     R = 6373.0
