@@ -18,6 +18,7 @@ st.subheader("This application will calculate first tier locations of required l
 file = st.file_uploader("Upload Planar physical data 'Physical_location_list_with_remote.xlsx'")
 exclude = st.checkbox("Exclude IBC sites")
 select=st.multiselect('Select sites to include',['dummy','On Air','Cancel','Plan','On Progress','Cancel,On Air','On Air,Plan','On Air,On Progress','On Progress,Plan','Cancel,On Air,On Progress','Cancel,On Progress,Plan'],['On Air','Cancel','Plan','On Progress'] )
+max_nbrs = st.slider("Select max number of neighbors",1,15,15,1)
 @st.cache
 def load_database(file):
     df = pd.read_excel(file,usecols=['U21_STATUS','U21_SITETYPE','LOCATION_ID','LATITUDE','LONGITUDE'])
@@ -83,6 +84,7 @@ if calc:
     first_tier = first_tier[['LOCATION_ID_left','LOCATION_ID_right','LATITUDE_right','LONGITUDE_right']].reset_index(drop = True)
     tempcode_firsttier = pd.merge(tempcode,first_tier,how = 'left',left_on = 'LOCATION_ID',right_on = 'LOCATION_ID_left')
     tempcode_firsttier['Distance'] = tempcode_firsttier.apply(lambda x:distance(x.LATITUDE,x.LONGITUDE,x.LATITUDE_right,x.LONGITUDE_right),axis=1)
+    tempcode_firsttier = tempcode_firsttier.sort_values(by=['LOCATION_ID','Distance']).groupby('LOCATION_ID').head(max_nbrs).reset_index(drop=True)
     st.dataframe(tempcode_firsttier)
     st.download_button('Download CSV',tempcode_firsttier.to_csv(),'output.csv')
 
